@@ -2,6 +2,7 @@ import java.util.Arrays;
 import java.util.Random;
 
 class Node{
+    // AVL stores height alongwith value of node
     int value, height;
     Node left, right;
 
@@ -12,28 +13,10 @@ class Node{
 }
 
 class BST{
-
+    // Similar implementation of BST with new Node definition
     Node root;
     public BST(){
         root = null;
-    }
-
-    public void insert(int n){
-        root = insertTree(root, n);
-    }
-
-    public Node insertTree(Node mid, int n){
-        if(mid==null){
-            mid = new Node(n);
-            return mid;
-        }
-        else if(n<mid.value){
-            mid.left = insertTree(mid.left, n);
-        }
-        else if(n>mid.value){
-            mid.right = insertTree(mid.right, n);
-        }
-        return mid;
     }
 
     public void traverse(){
@@ -50,6 +33,7 @@ class BST{
 }
 
 class AVL extends BST{
+    // AVL is an entension of BST
     
     AVL(){
 
@@ -60,6 +44,7 @@ class AVL extends BST{
     }
 
     public Node insertTree(Node mid, int n){
+        // Balances tree after value is inserted
         if(mid==null){
             mid = new Node(n);
             return mid;
@@ -73,11 +58,55 @@ class AVL extends BST{
         return balance(mid);
     }
 
+    public void remove(int n){
+        root = removeTree(root, n);
+    }
+
+    public Node removeTree(Node mid, int n){
+        // Removes element and balances tree
+        if(mid==null){
+            return mid;
+        }
+        else if(n<mid.value){
+            mid.left = removeTree(mid.left, n);
+        }
+        else if(n>mid.value){
+            mid.right = removeTree(mid.right, n);
+        }
+        else{
+            if(mid.left==null || mid.right==null){
+                // Node has less than 2 child
+                if(mid.left==null){
+                    // If no left child then right will replace
+                    mid = mid.right;
+                }
+                else{
+                    // If no right child then left will replace
+                    mid = mid.left;
+                }
+            }
+            else{
+                // Node has two childs
+                Node greatestLeftChild = new Node(mid.right.value); // Smallest value in right subtree
+                mid.value = greatestLeftChild.value;                // Replace node with that value
+                mid.right = removeTree(mid.right, mid.value);       // Remove that smalles value
+            }
+            
+        }
+        if(mid!=null){
+            // If there exists a node in AVL, rebalance it
+            mid = balance(mid);
+        }
+        return mid;
+    }
+
     public void updateHeight(Node mid){
+        // Updates height property of node
         mid.height = 1 + Math.max(height(mid.left), height(mid.right));
     }
 
     public int height(Node mid){
+        // Calculates height of node
         if(mid==null){
             return 0;
         }
@@ -85,6 +114,8 @@ class AVL extends BST{
     }
 
     public int balancingFactor(Node mid){
+        // Calculates balancing factor a.k.a. height difference
+        // Should be -1<=BF<=1
         if(mid==null){
             return 0;
         }
@@ -137,6 +168,7 @@ class AVL extends BST{
         try{
             if(balance>1){
                 if(height(Z.right.right)>height(Z.right.left)){
+                    // If tree is right heavy
                     Z = rotateLeft(Z);
                 }
                 else{
@@ -155,6 +187,7 @@ class AVL extends BST{
             }
             else if(balance<(-1)){
                 if(height(Z.left.left)>height(Z.left.right)){
+                    // If tree is left heavy
                     Z = rotateRight(Z);
                 }
                 else{
@@ -173,6 +206,7 @@ class AVL extends BST{
             }
         }
         catch(NullPointerException e){
+            // This is handle cases when the tree dosen't have enough values to performing rebalancing
             //System.out.println(e);
         }
         return Z;
@@ -223,6 +257,7 @@ class BinarySearchTreeAlgorithmBalanced{
         Arr[8] = 15;
         Arr[9] = 5;
 
+        // Use this if you want to test rotation;
         // Random rand = new Random();
         // for(int i=0;i<Arr.length;i++){
         //     Arr[i] = rand.nextInt(100);
@@ -245,5 +280,6 @@ class BinarySearchTreeAlgorithmBalanced{
         if(result==(-1)){
             System.out.println("55 is not present in array");
         }
+
     }
 }
