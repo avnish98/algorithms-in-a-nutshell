@@ -1,5 +1,5 @@
 FROM java:8
 COPY . /var/www/java  
 WORKDIR /var/www/java  
-RUN javac BinarySearchTreeAlgorithmBalanced.java
-CMD ["java", "BinarySearchTreeAlgorithmBalanced"]
+RUN javac DepthFirstSearch.java
+CMD ["java", "DepthFirstSearch"]
