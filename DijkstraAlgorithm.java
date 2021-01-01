@@ -39,6 +39,24 @@ class PriorityQueue{
         }
     }
 
+    void remove(int v){
+        // Removes element v from priority queue
+        if(isEmpty()!=1){
+            for(int i=0;i<size;i++){
+                if(values[i]==v){
+                    int j = i;
+                    while((j+1)!=size){
+                        values[j] = values[j+1];
+                        j++;
+
+                    }
+                    values[j] = (-1);
+                    break;
+                }
+            }
+        }
+    }
+
     int isEmpty(){
         // Checks if queue is empty
         if(values[0]==(-1)){
@@ -56,6 +74,7 @@ class PriorityQueue{
     }
 
     int minPriority(){
+        // Returns element with minimum priority
         if (priorities.length == 0)
             return -1;
 
@@ -68,10 +87,11 @@ class PriorityQueue{
                 index = i;
             }
         }
-        return index;
+        return values[index];
     }
 
     void changePriority(int x, int p){
+        // Changes priority of element x to p
         priorities[x] = p;
     }
 
@@ -161,54 +181,55 @@ class DijkstraAlgorithm{
         dist = new int[n];
         for(int i=0;i<n;i++){
             pred[i] = (-1);
-            dist[i] = (-1);
+            dist[i] = 99; // Substitute for postitive infinity
         }
     }
 
     public static int[] shortestPath(Graph g, PriorityQueue pq, int source){
-    
-        dist[source] = 0;
+        // Returns an array of shortest distance from source to every other vertex
+
+        dist[source] = 0; // Distance from source to source is 0
         
         for(int i=0;i<g.size;i++){
-            pq.enqueue(i, dist[i]);
+            pq.enqueue(i, dist[i]); // Add all elements to priority queue with associated distance as priority
         }
 
         while(pq.isEmpty()!=(1)){
-            int u = pq.minPriority();
-            System.out.println(u);
-            for(int n: g.neighbors(u)){
+            int u = pq.minPriority(); // Element with highest priority
+            for(int n: g.neighbors(u)){ // For each neighbor of that element
                 if(n!=(-1)){
-                    int w = g.weightMatrix[u][n];
-                    int newlength = dist[u] + w;
-
-                    if(newlength<dist[n]){
-                        pq.changePriority(n, newlength);
-                        dist[n] = newlength;
-                        pred[n] = u;
+                    int w = g.weightMatrix[u][n]; // Get weight of each neightbor to that node
+                    int newlength = dist[u] + w; // New length = distance from source to intermediate node + weight of next node 
+                    
+                    if(newlength<dist[n]){   // If new length is smaller than older distance 
+                        pq.changePriority(n, newlength); // Update priority of elements
+                        dist[n] = newlength; // Update distance from source
+                        pred[n] = u;    // Update predecessor of neighbor
                     }
                 }
             }
+            pq.remove(u); // Remove element from priority queue once finished with all neighbors
         }
-        return dist;
+        return dist; // Return array of distance from source
     }
 
     public static void main(String[] args) {
 
-        Graph g = new Graph(6);
-        PriorityQueue pq = new PriorityQueue(6);
+        Graph g = new Graph(6); // A non-directional graph
+        PriorityQueue pq = new PriorityQueue(6); // A priority Queue
         DijkstraAlgorithm djks = new DijkstraAlgorithm(6);
-        // Connecting vertices
+        
+        //Connecting vertices with weights
         g.connect(0, 2, 8);
         g.connect(0, 1, 6);
         g.connect(0, 3, 18);
         g.connect(1, 4, 11);
         g.connect(2, 3, 9);
-        g.connect(2, 5, 7);
-        g.connect(3, 5, 4);
+        g.connect(5, 2, 7);
+        g.connect(5, 3, 4);
         g.connect(4, 5, 3);
     
         int[] dist = djks.shortestPath(g, pq, 0);
-        System.out.println("Shortest distance from source to other vertices: "+Arrays.toString(dist));
-        
+        System.out.println("Shortest distance from source to other vertices: "+Arrays.toString(dist)); 
     }
 }
